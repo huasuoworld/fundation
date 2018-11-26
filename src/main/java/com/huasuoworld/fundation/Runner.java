@@ -9,13 +9,12 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
 
-import javax.xml.bind.JAXBContext;
-
 public class Runner {
 
     private static Server server;
 
     public static void main(String[] args) throws Exception {
+        //load properties
         new Runner().run();
     }
 

@@ -21,7 +21,7 @@ public class BindJerseyResourcesModule extends ServletModule {
     }
 
     private Set<Class<?>> lookupResources() {
-        PackagesResourceConfig resourceConfig = new PackagesResourceConfig("com.github.reap.rest.resource");
+        PackagesResourceConfig resourceConfig = new PackagesResourceConfig("com.huasuoworld.fundation.resource");
         return resourceConfig.getClasses();
     }
 
