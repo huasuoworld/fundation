@@ -14,6 +14,8 @@
     <main.verticle>io.vertx.starter.MainVerticle</main.verticle>
     <!--Dependency versions-->
     <guice.version>4.1.0</guice.version>
+    <junit.version>4.12</junit.version>
+    <maven.shade.plugin.version>2.4.3</maven.shade.plugin.version>
     <!--<vertx.version>3.3.0</vertx.version>-->
   </properties>
 
@@ -49,6 +51,11 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-unit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>${guice.version}</version>
     </dependency>
   </dependencies>
 
