@@ -18,11 +18,11 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
 
 
 
-  private Map<String, Transaction> transactions;
+  private Map<String, Transaction> transactions = new HashMap<>();
 
-  public TransactionPersistenceImpl() {
-    transactions = new HashMap<>();
-  }
+//  public TransactionPersistenceImpl() {
+//    transactions = new HashMap<>();
+//  }
 
 
 

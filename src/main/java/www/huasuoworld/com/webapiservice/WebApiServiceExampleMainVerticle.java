@@ -1,17 +1,16 @@
 package www.huasuoworld.com.webapiservice;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.api.contract.openapi3.OpenAPI3RouterFactory;
-
 import io.vertx.serviceproxy.ServiceBinder;
-import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
+import www.huasuoworld.com.webapiservice.guice.GuiceBinder;
 import www.huasuoworld.com.webapiservice.services.TransactionsManagerService;
 
 
@@ -19,16 +18,16 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
   HttpServer server;
   ServiceBinder serviceBinder;
-  MessageConsumer<JsonObject> consumer;
+//  MessageConsumer<JsonObject> consumer;
+  Injector injector;
   /**
    * Start transaction service
    */
   private void startTransactionService() {
     serviceBinder = new ServiceBinder(vertx);
-    TransactionPersistence persistence = TransactionPersistence.create();
-    // Create an instance of TransactionManagerService and mount to event bus
-    TransactionsManagerService transactionsManagerService = TransactionsManagerService.create(persistence);
-    consumer = serviceBinder
+    TransactionsManagerService transactionsManagerService = injector.getInstance(TransactionsManagerService.class);
+//    consumer =
+    serviceBinder
       .setAddress("transactions_manager.myapp")
       .register(TransactionsManagerService.class, transactionsManagerService);
   }
@@ -63,6 +62,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Future<Void> future) {
+    injector = Guice.createInjector(new GuiceBinder());
     startTransactionService();
     startHttpServer().setHandler(future.completer());
   }
@@ -73,7 +73,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   @Override
   public void stop() {
     this.server.close();
-    consumer.unregister();
+//    consumer.unregister();
   }
 
   public static void main(String[] args) {

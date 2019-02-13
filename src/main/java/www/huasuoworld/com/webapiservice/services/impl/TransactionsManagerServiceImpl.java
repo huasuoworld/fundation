@@ -10,7 +10,7 @@ import www.huasuoworld.com.webapiservice.models.Transaction;
 import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 import www.huasuoworld.com.webapiservice.services.TransactionsManagerService;
 
-
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +23,7 @@ public class TransactionsManagerServiceImpl implements TransactionsManagerServic
 
   private TransactionPersistence persistence;
 
+  @Inject
   public TransactionsManagerServiceImpl(TransactionPersistence persistence) {
     this.persistence = persistence;
   }
@@ -101,6 +102,4 @@ public class TransactionsManagerServiceImpl implements TransactionsManagerServic
     // Elegant predicates combination
     return predicates.stream().reduce(transaction -> true, Predicate::and);
   }
-
-
 }
