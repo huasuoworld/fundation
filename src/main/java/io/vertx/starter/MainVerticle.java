@@ -27,7 +27,7 @@ public class MainVerticle extends AbstractVerticle {
     router.route().handler(BodyHandler.create());
     router.get("/hello").handler(new MyHandler(injector.getInstance(MyDependency.class)));
 
-    vertx.createHttpServer().requestHandler(router).listen(8080);
+    vertx.createHttpServer().requestHandler(router).listen(8081);
   }
 
 }
