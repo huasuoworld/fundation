@@ -38,7 +38,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   public Optional<Transaction> getTransaction(String transactionId) {
     Map<String, Transaction> transactions = new HashMap<>();
 
-    mysqlConnection.getConn(null).getConnection(conn -> {
+    mysqlConnection.getClient().getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
@@ -73,7 +73,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   @Override
   public Transaction addTransaction(Transaction t) {
     transactions.put(t.getId(), t);
-    mysqlConnection.getConn(null).getConnection(conn -> {
+    mysqlConnection.getClient().getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
@@ -93,7 +93,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   @Override
   public boolean removeTransaction(String transactionId) {
 
-    mysqlConnection.getConn(null).getConnection(conn -> {
+    mysqlConnection.getClient().getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;

@@ -4,5 +4,6 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.jdbc.JDBCClient;
 
 public interface MysqlConnection {
-  public JDBCClient getConn(Vertx vertx);
+  public JDBCClient getClient();
+  public void setVertx(Vertx vertx);
 }

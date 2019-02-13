@@ -7,8 +7,15 @@ import io.vertx.ext.jdbc.JDBCClient;
 public class MysqlConnectionImpl implements MysqlConnection {
 
   private JDBCClient client;
+  private Vertx vertx;
+
   @Override
-  public JDBCClient getConn(Vertx vertx) {
+  public void setVertx(Vertx vertx) {
+    this.vertx = vertx;
+  }
+
+  @Override
+  public JDBCClient getClient() {
     if(client == null) {
       client = JDBCClient.createShared(vertx, new JsonObject()
         .put("url", "jdbc:mysql//localhost:3306/test?shutdown=true")
