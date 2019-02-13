@@ -1,6 +1,8 @@
 package www.huasuoworld.com.webapiservice.guice;
 
 import com.google.inject.AbstractModule;
+import www.huasuoworld.com.webapiservice.jdbc.MysqlConnection;
+import www.huasuoworld.com.webapiservice.jdbc.MysqlConnectionImpl;
 import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 import www.huasuoworld.com.webapiservice.persistence.impl.TransactionPersistenceImpl;
 import www.huasuoworld.com.webapiservice.services.TransactionsManagerService;
@@ -19,5 +21,6 @@ public class GuiceBinder extends AbstractModule {
   protected void configure() {
     bind(TransactionPersistence.class).to(TransactionPersistenceImpl.class).in(Singleton.class);
     bind(TransactionsManagerService.class).to(TransactionsManagerServiceImpl.class).in(Singleton.class);
+    bind(MysqlConnection.class).to(MysqlConnectionImpl.class).in(Singleton.class);
   }
 }

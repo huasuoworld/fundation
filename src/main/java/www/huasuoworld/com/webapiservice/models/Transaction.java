@@ -7,6 +7,8 @@ import io.vertx.codegen.annotations.Fluent;
 
 import io.vertx.core.json.JsonObject;
 
+import java.util.UUID;
+
 
 /**
  * Data object that represents a persistence
@@ -158,5 +160,8 @@ public class Transaction {
 
   }
 
-
+  public String insertSql() {
+    String uuid = UUID.randomUUID().toString().replaceAll("-","");
+    return "insert into transaction values ('" + uuid + "', '" + message + "', '" + from + "', '" + to + "', '" + value + "')";
+  }
 }
