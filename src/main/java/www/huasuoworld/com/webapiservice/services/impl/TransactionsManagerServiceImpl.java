@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.api.OperationRequest;
 import io.vertx.ext.web.api.OperationResponse;
 import www.huasuoworld.com.webapiservice.models.Transaction;
@@ -57,7 +58,12 @@ public class TransactionsManagerServiceImpl implements TransactionsManagerServic
   public void getTransaction(
     String transactionId,
     OperationRequest context, Handler<AsyncResult<OperationResponse>> resultHandler) {
-    persistence.getTransaction(transactionId, resultHandler);
+//    Optional<JsonObject> t =
+      persistence.getTransaction(transactionId, resultHandler);
+//    if (t.isPresent())
+//      resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(t.get())));
+//    else
+//      resultHandler.handle(Future.succeededFuture(new OperationResponse().setStatusCode(404).setStatusMessage("Not Found")));
   }
 
 

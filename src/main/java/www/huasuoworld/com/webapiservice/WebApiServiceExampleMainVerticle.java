@@ -11,7 +11,6 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.api.contract.openapi3.OpenAPI3RouterFactory;
 import io.vertx.serviceproxy.ServiceBinder;
 import www.huasuoworld.com.webapiservice.guice.GuiceBinder;
-import www.huasuoworld.com.webapiservice.jdbc.MysqlConnection;
 import www.huasuoworld.com.webapiservice.services.TransactionsManagerService;
 
 
@@ -27,8 +26,6 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   private void startTransactionService() {
     serviceBinder = new ServiceBinder(vertx);
     TransactionsManagerService transactionsManagerService = injector.getInstance(TransactionsManagerService.class);
-    MysqlConnection conn = injector.getInstance(MysqlConnection.class);
-    conn.setVertx(vertx);
 //    consumer =
     serviceBinder
       .setAddress("transactions_manager.myapp")
@@ -65,7 +62,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Future<Void> future) {
-    injector = Guice.createInjector(new GuiceBinder());
+    injector = Guice.createInjector(new GuiceBinder(vertx));
     startTransactionService();
     startHttpServer().setHandler(future.completer());
   }

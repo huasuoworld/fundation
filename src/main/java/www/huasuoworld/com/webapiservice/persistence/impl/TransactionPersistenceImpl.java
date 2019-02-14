@@ -4,14 +4,15 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.SQLRowStream;
 import io.vertx.ext.web.api.OperationResponse;
-import www.huasuoworld.com.webapiservice.jdbc.MysqlConnection;
+import org.apache.commons.lang3.StringUtils;
 import www.huasuoworld.com.webapiservice.models.Transaction;
 import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +26,12 @@ import java.util.stream.Collectors;
  */
 public class TransactionPersistenceImpl implements TransactionPersistence {
 
-
-  private MysqlConnection mysqlConnection;
   private Map<String, Transaction> transactions;
+  private SQLClient jdbc;
 
-  public TransactionPersistenceImpl(MysqlConnection mysqlConnection) {
-    this.mysqlConnection = mysqlConnection;
+  @Inject
+  public TransactionPersistenceImpl(SQLClient jdbc) {
+    this.jdbc = jdbc;
     this.transactions = new HashMap<>();
   }
 
@@ -41,7 +42,8 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
 
   @Override
   public void getTransaction(String transactionId, Handler<AsyncResult<OperationResponse>> resultHandler) {
-    mysqlConnection.getClient().getConnection(conn -> {
+//    Map<String, JsonObject> transactionMap = new HashMap<>();
+    jdbc.getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
@@ -56,13 +58,14 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
 
         SQLRowStream sqlRowStream = stream.result();
         sqlRowStream.handler(row -> {
-            if (row == null) {
+            if (row == null || StringUtils.isEmpty(row.encode())) {
+              System.out.println("row is null");
               resultHandler.handle(Future.succeededFuture(new OperationResponse().setStatusCode(404).setStatusMessage("Not Found")));
             } else {
               // do something with the row...
-              System.out.println(row.encode());
-              JsonObject transaction = row.getJsonObject(0);
-              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(transaction)));
+              JsonArray val = new JsonArray(row.encode());
+              System.out.println("transactionId..." + transactionId + "..." + val.toString());
+              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(val)));
             }
           }).endHandler(v -> {
             // no more data available, close the connection
@@ -79,7 +82,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   @Override
   public Transaction addTransaction(Transaction t) {
     transactions.put(t.getId(), t);
-    mysqlConnection.getClient().getConnection(conn -> {
+    jdbc.getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
@@ -99,7 +102,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   @Override
   public boolean removeTransaction(String transactionId) {
 
-    mysqlConnection.getClient().getConnection(conn -> {
+    jdbc.getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
@@ -123,5 +126,10 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
     Transaction t = transactions.replace(transactionId, transaction);
     if (t != null) return true;
     else return false;
+  }
+
+  public static void main(String[] args) {
+    JsonArray json = new JsonArray("[\"4cb3596fadbe4e74ac23d90efb18c3bd\",\"items\",\"thomas@example.com\",\"francesco@example.com\",46.0]");
+    System.out.println(json.toString());
   }
 }
