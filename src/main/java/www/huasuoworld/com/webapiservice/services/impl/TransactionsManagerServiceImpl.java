@@ -57,11 +57,7 @@ public class TransactionsManagerServiceImpl implements TransactionsManagerServic
   public void getTransaction(
     String transactionId,
     OperationRequest context, Handler<AsyncResult<OperationResponse>> resultHandler) {
-    Optional<Transaction> t = persistence.getTransaction(transactionId);
-    if (t.isPresent())
-      resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(t.get().toJson())));
-    else
-      resultHandler.handle(Future.succeededFuture(new OperationResponse().setStatusCode(404).setStatusMessage("Not Found")));
+    persistence.getTransaction(transactionId, resultHandler);
   }
 
 

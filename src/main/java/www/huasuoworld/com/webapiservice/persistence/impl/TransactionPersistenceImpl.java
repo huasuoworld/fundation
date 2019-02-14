@@ -1,7 +1,13 @@
 package www.huasuoworld.com.webapiservice.persistence.impl;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.sql.SQLRowStream;
+import io.vertx.ext.web.api.OperationResponse;
 import www.huasuoworld.com.webapiservice.jdbc.MysqlConnection;
 import www.huasuoworld.com.webapiservice.models.Transaction;
 import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
@@ -9,7 +15,6 @@ import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -35,39 +40,40 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   }
 
   @Override
-  public Optional<Transaction> getTransaction(String transactionId) {
-    Map<String, Transaction> transactions = new HashMap<>();
-
+  public void getTransaction(String transactionId, Handler<AsyncResult<OperationResponse>> resultHandler) {
     mysqlConnection.getClient().getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
         return;
       }
       final SQLConnection connection = conn.result();
-
-      connection.queryWithParams("select * from transaction where id = ?", new JsonArray().add(transactionId), rs -> {
-        Transaction transaction = null;
-        if (rs.failed()) {
+      connection.queryStreamWithParams("select * from transaction where id = ?", new JsonArray().add(transactionId), stream -> {
+        if (stream.failed()) {
           System.err.println("Cannot retrieve the data from the database");
-          rs.cause().printStackTrace();
+          stream.cause().printStackTrace();
           return;
         }
 
-        for (JsonArray line : rs.result().getResults()) {
-          transaction = new Transaction(line.getJsonObject(0));
-          transactions.put(transactionId, transaction);
-          System.out.println(line.encode());
-        }
-
-        // and close the connection
-        connection.close(done -> {
-          if (done.failed()) {
-            throw new RuntimeException(done.cause());
-          }
-        });
+        SQLRowStream sqlRowStream = stream.result();
+        sqlRowStream.handler(row -> {
+            if (row == null) {
+              resultHandler.handle(Future.succeededFuture(new OperationResponse().setStatusCode(404).setStatusMessage("Not Found")));
+            } else {
+              // do something with the row...
+              System.out.println(row.encode());
+              JsonObject transaction = row.getJsonObject(0);
+              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(transaction)));
+            }
+          }).endHandler(v -> {
+            // no more data available, close the connection
+            connection.close(done -> {
+              if (done.failed()) {
+                throw new RuntimeException(done.cause());
+              }
+            });
+          });
       });
     });
-    return Optional.ofNullable(transactions.get(transactionId));
   }
 
   @Override

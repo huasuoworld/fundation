@@ -1,5 +1,8 @@
 package www.huasuoworld.com.webapiservice.persistence;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.api.OperationResponse;
 import www.huasuoworld.com.webapiservice.models.Transaction;
 import www.huasuoworld.com.webapiservice.persistence.impl.TransactionPersistenceImpl;
 
@@ -22,13 +25,13 @@ public interface TransactionPersistence {
    *
    * @return
    */
-  static TransactionPersistence create() {
-    return new TransactionPersistenceImpl();
-  }
+//  static TransactionPersistence create() {
+//    return new TransactionPersistenceImpl();
+//  }
 
   List<Transaction> getFilteredTransactions(Predicate<Transaction> p);
 
-  Optional<Transaction> getTransaction(String transactionId);
+  void getTransaction(String transactionId, Handler<AsyncResult<OperationResponse>> resultHandler);
 
   Transaction addTransaction(Transaction t);
 
