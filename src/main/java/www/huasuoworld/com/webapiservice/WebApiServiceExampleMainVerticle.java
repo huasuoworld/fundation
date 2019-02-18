@@ -48,11 +48,18 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
         Router router = routerFactory.getRouter();
         server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost"));
         server.requestHandler(router).listen(ar -> {
+          System.out.println("server.requestHandler...");
           // Error starting the HttpServer
-          if (ar.succeeded()) future.complete();
-          else future.fail(ar.cause());
+          if (ar.succeeded()) {
+            System.out.println("server.requestHandler...ar.succeeded...");
+            future.complete();
+          } else {
+            System.out.println("server.requestHandler...ar.cause...");
+            future.fail(ar.cause());
+          }
         });
       } else {
+        System.out.println("future.fail....");
         // Something went wrong during router factory initialization
         future.fail(openAPI3RouterFactoryAsyncResult.cause());
       }

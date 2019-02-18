@@ -2,12 +2,10 @@ package www.huasuoworld.com.webapiservice.persistence;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.api.OperationResponse;
 import www.huasuoworld.com.webapiservice.models.Transaction;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 
@@ -16,7 +14,6 @@ import java.util.function.Predicate;
  *
  * @author slinkydeveloper
  */
-
 public interface TransactionPersistence {
 
 

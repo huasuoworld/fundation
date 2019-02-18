@@ -2,6 +2,7 @@ package www.huasuoworld.com.webapiservice.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.MySQLClient;
@@ -10,8 +11,6 @@ import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 import www.huasuoworld.com.webapiservice.persistence.impl.TransactionPersistenceImpl;
 import www.huasuoworld.com.webapiservice.services.TransactionsManagerService;
 import www.huasuoworld.com.webapiservice.services.impl.TransactionsManagerServiceImpl;
-
-import javax.inject.Singleton;
 
 /**
  * Guice module
@@ -50,7 +49,9 @@ public class GuiceBinder extends AbstractModule {
    * }
    * */
   @Provides
+  @Singleton
   SQLClient jdbc() {
+    System.out.println("jdbc init......");
     SQLClient jdbc = MySQLClient.createShared(vertx, new JsonObject()
       .put("host","10.60.1.22")
       .put("port", 3306)

@@ -43,6 +43,32 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   @Override
   public void getTransaction(String transactionId, Handler<AsyncResult<OperationResponse>> resultHandler) {
 //    Map<String, JsonObject> transactionMap = new HashMap<>();
+
+//    jdbc.queryWithParams("select * from transaction where id = ?", new JsonArray().add(transactionId), rs -> {
+////      Transaction transaction = null;
+//      JsonArray val = null;
+//      if (rs.failed()) {
+//        System.err.println("Cannot retrieve the data from the database");
+//        rs.cause().printStackTrace();
+//        return;
+//      }
+//
+//      for (JsonArray line : rs.result().getResults()) {
+//          val = line;
+////        transaction = new Transaction(line.getJsonObject(0));
+////        transactions.put(transactionId, transaction);
+//        System.out.println(line.encode());
+//      }
+//
+//      // and close the connection
+//      jdbc.close(done -> {
+//        if (done.failed()) {
+//          throw new RuntimeException(done.cause());
+//        }
+//      });
+//      resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(val)));
+//    });
+//    resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(new JsonObject("{\"4cb3596fadbe4e74ac23d90efb18c3bd\",\"items\",\"thomas@example.com\",\"francesco@example.com\",467.0}"))));
     jdbc.getConnection(conn -> {
       if (conn.failed()) {
         System.err.println(conn.cause().getMessage());
@@ -70,6 +96,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
           }).endHandler(v -> {
             // no more data available, close the connection
             connection.close(done -> {
+              System.out.println("relese......");
               if (done.failed()) {
                 throw new RuntimeException(done.cause());
               }
