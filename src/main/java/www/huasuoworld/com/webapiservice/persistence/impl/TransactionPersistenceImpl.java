@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.SQLRowStream;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -90,8 +92,10 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
             } else {
               // do something with the row...
               JsonArray val = new JsonArray(row.encode());
-              System.out.println("transactionId..." + transactionId + "..." + val.toString());
-              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(val)));
+              Transaction t = new Transaction(val.getString(0), val.getString(1), val.getString(2), val.getString(3), val.getDouble(4));
+              Optional<Transaction> o =  Optional.ofNullable(t);
+              System.out.println("transactionId..." + transactionId + "..." + o.get().toJson());
+              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(o.get().toJson())));
             }
           }).endHandler(v -> {
             // no more data available, close the connection
@@ -156,7 +160,8 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
   }
 
   public static void main(String[] args) {
-    JsonArray json = new JsonArray("[\"4cb3596fadbe4e74ac23d90efb18c3bd\",\"items\",\"thomas@example.com\",\"francesco@example.com\",46.0]");
+    JsonObject json = new JsonObject("[\"4cb3596fadbe4e74ac23d90efb18c3bd\",\"items\",\"thomas@example.com\",\"francesco@example.com\",46.0]");
+//    Transaction transaction = new Transaction();
     System.out.println(json.toString());
   }
 }
