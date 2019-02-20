@@ -107,7 +107,7 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
             });
           });
       });
-    });
+    }).close();
   }
 
   @Override

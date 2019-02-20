@@ -14,6 +14,7 @@ import java.util.function.Predicate;
  *
  * @author slinkydeveloper
  */
+
 public interface TransactionPersistence {
 
 
