@@ -31,7 +31,6 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
       .setAddress("transactions_manager.myapp")
       .register(TransactionsManagerService.class, transactionsManagerService);
   }
-
   /**
    * This method constructs the router factory, mounts services and handlers and starts the http server with built router
    *
@@ -39,17 +38,19 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
    */
   private Future<Void> startHttpServer() {
     Future<Void> future = Future.future();
-    OpenAPI3RouterFactory.create(this.vertx, "/openapi.json", openAPI3RouterFactoryAsyncResult -> {
+    OpenAPI3RouterFactory.create(this.vertx, "http://www.huasuoworld.com/head/openapi.json", openAPI3RouterFactoryAsyncResult -> {
       if (openAPI3RouterFactoryAsyncResult.succeeded()) {
         OpenAPI3RouterFactory routerFactory = openAPI3RouterFactoryAsyncResult.result();
         // Mount services on event bus based on extensions
         routerFactory.mountServicesFromExtensions();
         // Generate the router
         Router router = routerFactory.getRouter();
-        server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost"));
+
+        server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost").setMaxHeaderSize(30480));
         server.requestHandler(router).listen(ar -> {
           System.out.println("server.requestHandler...");
           // Error starting the HttpServer
+
           if (ar.succeeded()) {
             System.out.println("server.requestHandler...ar.succeeded...");
             future.complete();
