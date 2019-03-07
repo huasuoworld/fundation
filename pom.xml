@@ -91,6 +91,12 @@
       <artifactId>vertx-mysql-postgresql-client</artifactId>
       <version>${vertx.version}</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/io.vertx/vertx-auth-jwt -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-jwt</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

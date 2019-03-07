@@ -5,6 +5,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.jwt.JWTAuth;
+import io.vertx.ext.jwt.JWTOptions;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.SQLRowStream;
@@ -30,10 +32,12 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
 
   private Map<String, Transaction> transactions;
   private SQLClient jdbc;
+  private JWTAuth provider;
 
   @Inject
-  public TransactionPersistenceImpl(SQLClient jdbc) {
+  public TransactionPersistenceImpl(SQLClient jdbc, JWTAuth provider) {
     this.jdbc = jdbc;
+    this.provider = provider;
     this.transactions = new HashMap<>();
   }
 
@@ -95,7 +99,8 @@ public class TransactionPersistenceImpl implements TransactionPersistence {
               Transaction t = new Transaction(val.getString(0), val.getString(1), val.getString(2), val.getString(3), val.getDouble(4));
               Optional<Transaction> o =  Optional.ofNullable(t);
               System.out.println("transactionId..." + transactionId + "..." + o.get().toJson());
-              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(o.get().toJson())));
+              String token = provider.generateToken(new JsonObject(), new JWTOptions().setAlgorithm("ES256"));
+              resultHandler.handle(Future.succeededFuture(OperationResponse.completedWithJson(o.get().toJson()).putHeader("token", token)));
             }
           }).endHandler(v -> {
             // no more data available, close the connection

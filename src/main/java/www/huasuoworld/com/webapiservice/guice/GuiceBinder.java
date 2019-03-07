@@ -6,6 +6,9 @@ import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.MySQLClient;
+import io.vertx.ext.auth.PubSecKeyOptions;
+import io.vertx.ext.auth.jwt.JWTAuth;
+import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.sql.SQLClient;
 import www.huasuoworld.com.webapiservice.persistence.TransactionPersistence;
 import www.huasuoworld.com.webapiservice.persistence.impl.TransactionPersistenceImpl;
@@ -63,5 +66,22 @@ public class GuiceBinder extends AbstractModule {
       .put("password", "root"));
 
     return jdbc;
+  }
+
+  @Provides
+  @Singleton
+  JWTAuth provider() {
+    JWTAuth provider = JWTAuth.create(vertx, new JWTAuthOptions()
+      .addPubSecKey(new PubSecKeyOptions()
+        .setAlgorithm("ES256")
+        .setPublicKey(
+          "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEraVJ8CpkrwTPRCPluUDdwC6b8+m4\n" +
+            "dEjwl8s+Sn0GULko+H95fsTREQ1A2soCFHS4wV3/23Nebq9omY3KuK9DKw==\n")
+        .setSecretKey(
+          "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgeRyEfU1NSHPTCuC9\n" +
+            "rwLZMukaWCH2Fk6q5w+XBYrKtLihRANCAAStpUnwKmSvBM9EI+W5QN3ALpvz6bh0\n" +
+            "SPCXyz5KfQZQuSj4f3l+xNERDUDaygIUdLjBXf/bc15ur2iZjcq4r0Mr")
+      ));
+    return provider;
   }
 }

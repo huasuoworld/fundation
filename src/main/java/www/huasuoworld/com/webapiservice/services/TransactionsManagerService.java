@@ -22,9 +22,9 @@ import java.util.List;
 public interface TransactionsManagerService {
 
 
-  static TransactionsManagerService create(TransactionPersistence persistence) {
-    return new TransactionsManagerServiceImpl(persistence);
-  }
+//  static TransactionsManagerService create(TransactionPersistence persistence) {
+//    return new TransactionsManagerServiceImpl(persistence);
+//  }
 
 
   void getTransactionsList(
