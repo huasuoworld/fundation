@@ -60,4 +60,5 @@ To build the project, just use:
 mvn clean package
 ----
 
-It generates a _fat-jar_ in the `target` directory.
+It generates a _fat-jar_ in the `target` directory. \r
+https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#operation-object
